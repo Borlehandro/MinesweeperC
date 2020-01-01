@@ -17,6 +17,5 @@ int main(int argc, char* argv[]) {
 
 	game->onRun();
 
-
 	return 0;
 }

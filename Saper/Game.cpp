@@ -48,7 +48,7 @@ int Game::onPreload() {
 		return 3;
 	}
 
-	background = textureManager->LoadImage(renderer, "test.bmp");
+	background = textureManager->LoadImage(renderer, "./Textures/test.bmp");
 
 	return 0;
 }
@@ -56,8 +56,6 @@ int Game::onPreload() {
 void Game::onRun() {
 
 	SDL_Event event;
-
-	// bool quit = false;
 
 		while (run) {
 
