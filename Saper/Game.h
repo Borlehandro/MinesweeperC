@@ -4,6 +4,8 @@
 
 class Game {
 	private:
+		//Private functions
+		void parseEvent(SDL_Event &event);
 
 		//Functional objects
 		SDL_Window* window = nullptr;

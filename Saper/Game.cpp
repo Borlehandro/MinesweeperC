@@ -1,5 +1,30 @@
 #include "Game.h"
 
+void Game::parseEvent(SDL_Event& event) {
+
+	switch (event.type) {
+		
+	case(SDL_QUIT):
+		run = false;
+		break;
+
+	case(SDL_MOUSEBUTTONDOWN):
+		switch (event.button.button) {
+
+		case (SDL_BUTTON_LEFT):
+			std::cout << "Mouse left" << std::endl;
+			break;
+
+		case (SDL_BUTTON_RIGHT):
+			std::cout << "Mouse right" << std::endl;
+			break;
+
+		}
+
+		break;
+	}
+}
+
 int Game::onPreload() {
 
 	if (SDL_Init(SDL_INIT_EVERYTHING) == -1) {
@@ -32,17 +57,12 @@ void Game::onRun() {
 
 	SDL_Event event;
 
-	bool quit = false;
+	// bool quit = false;
 
-		while (!quit) {
+		while (run) {
 
 			SDL_WaitEvent(&event);
-
-			switch (event.type) {
-			case SDL_QUIT:
-				quit = true;
-				break;
-			}
+			parseEvent(event);
 
 			textureManager->ApplySurface(0, 0, background, renderer);
 		}
