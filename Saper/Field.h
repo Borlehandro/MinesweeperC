@@ -1,4 +1,5 @@
 #pragma once
+#include "TextureManager.h"
 #include "Cell.h"
 // May be circular inclusion here
 
@@ -12,8 +13,17 @@ private:
 	// Array of cells
 	Cell* cells = nullptr;
 
+	// Textures
+	SDL_Texture *zero, *one, *two, *three, *four, *five, *six, *seven, *eight, *empty, *bomb, *flag;
+
+	SDL_Renderer *renderer;
+
+	// Functions inside
+	void loadTextures();
+	int calculateValue(int index);
+
 public:
-	Field(int _cells, int _bombs); // I will also generate it here
+	Field(int _cells, int _bombs, SDL_Renderer* _renderer); // I will also generate it here
 
 };
 
