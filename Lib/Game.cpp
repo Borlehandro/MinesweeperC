@@ -1,4 +1,5 @@
 #include "Game.h"
+#include <SDL2/SDL.h>
 
 void Game::parseEvent(SDL_Event& event) {
 

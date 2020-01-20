@@ -1,5 +1,5 @@
 #pragma once
-#include "SDL.h"
+
 #include "TextureManager.h"
 #include "Field.h"
 
