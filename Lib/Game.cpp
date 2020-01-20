@@ -51,7 +51,7 @@ int Game::onPreload() {
 
 	background = textureManager->LoadImage(renderer, "./Textures/test.bmp");
 
-	Field *field = new Field(5, 3, renderer);
+	auto *field = new Field(5, 3, renderer);
 
 	return 0;
 }

@@ -14,7 +14,7 @@ Field::Field(int _cells, int _bombs, SDL_Renderer *_renderer) :
 	// Max number is 8
 	// Firstly set all bombs (-1 in value)
 
-	std::mt19937 gen(time(0));
+	std::mt19937 gen(time(nullptr));
 	std::set<int> indexes;
 
 	for (int i = 0; i < cellsCount * cellsCount; ++i)
@@ -30,15 +30,17 @@ Field::Field(int _cells, int _bombs, SDL_Renderer *_renderer) :
 
 		cells[*std::next(indexes.begin(), index)] = Cell(-1, bomb, empty);
 
+        putMarkersAround(*std::next(indexes.begin(), index));
+
 		indexes.erase(std::next(indexes.begin(), index));
 
 	}
 
 	// Put numbers in cells
-	for (int i = 0; i < cellsCount * cellsCount; ++i) {
+	/*for (int i = 0; i < cellsCount * cellsCount; ++i) {
 		if (cells[i].value == 0)
 			cells[i].value = calculateValue(i);
-	}
+	}*/
 
 	// For debug
 	for (int i = 0; i < cellsCount; ++i) {
@@ -50,7 +52,41 @@ Field::Field(int _cells, int _bombs, SDL_Renderer *_renderer) :
 
 }
 
-int Field::calculateValue(int index) {
+void Field::putMarkersAround(const int &index) {
+
+    // i / n - row
+    // i % n - coll
+
+    int i = index / cellsCount;
+    int j = index % cellsCount;
+
+    #define UP_LEFT_VALUE cells[(i-1)*cellsCount+(j-1)].value
+    #define UP_CENTRAL_VALUE cells[(i - 1) * cellsCount + j].value
+    #define UP_RIGHT_VALUE cells[(i - 1) * cellsCount + (j + 1)].value
+
+    #define MIDDLE_LEFT_VALUE cells[i * cellsCount + (j - 1)].value
+    #define MIDDLE_RIGHT_VALUE cells[i*cellsCount + (j + 1)].value
+
+    #define DOWN_LEFT_VALUE cells[(i + 1)*cellsCount + (j - 1)].value
+    #define DOWN_CENTRAL_VALUE cells[(i + 1)*cellsCount + j].value
+    #define DOWN_RIGHT_VALUE cells[(i + 1)*cellsCount + (j + 1)].value
+
+    // Up
+    UP_LEFT_VALUE += (i - 1 >= 0) && (j - 1 >= 0) && (UP_LEFT_VALUE != -1) ? 1 : 0;
+    UP_CENTRAL_VALUE += (i - 1 >= 0) && (UP_CENTRAL_VALUE != -1) ? 1 : 0;
+    UP_RIGHT_VALUE += (i - 1 >= 0) && (j + 1 < cellsCount) && (UP_RIGHT_VALUE != -1) ? 1 : 0;
+
+    // Mid
+    MIDDLE_LEFT_VALUE += (j - 1 >= 0) && (MIDDLE_LEFT_VALUE != -1) ? 1 : 0;
+    MIDDLE_RIGHT_VALUE += (j + 1 < cellsCount) && (MIDDLE_RIGHT_VALUE != -1) ? 1 : 0;
+
+    // Down
+    DOWN_LEFT_VALUE += (i + 1 < cellsCount) && (j - 1 >= 0) && (DOWN_LEFT_VALUE != -1) ? 1 : 0;
+    DOWN_CENTRAL_VALUE += (i + 1 < cellsCount) && (DOWN_CENTRAL_VALUE != -1) ? 1 : 0;
+    DOWN_RIGHT_VALUE += (i + 1 < cellsCount) && (j + 1 < cellsCount) && (DOWN_RIGHT_VALUE != -1) ? 1 : 0;
+}
+
+/* int Field::calculateValue(int index) {
 	
 	int count = 0;
 
@@ -75,7 +111,7 @@ int Field::calculateValue(int index) {
 	count += (i + 1 < cellsCount && j + 1 < cellsCount) ? (cells[(i + 1)*cellsCount + (j + 1)].value == -1) : 0;
 
 	return count;
-}
+} */
 
 void Field::loadTextures() {
 

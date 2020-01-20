@@ -21,6 +21,7 @@ private:
 	// Functions inside
 	void loadTextures();
 	int calculateValue(int index);
+	void putMarkersAround(const int &index);
 
 public:
 	Field(int _cells, int _bombs, SDL_Renderer* _renderer); // I will also generate it here
