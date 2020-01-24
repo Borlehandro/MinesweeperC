@@ -73,11 +73,7 @@ void Game::parseEvent(SDL_Event &event) {
                     if(isInField(event.button.x, event.button.y)) {
 
                         std::cout << "Mouse left" << std::endl;
-
-                        int cellClickedNumberI = event.button.x/CELL_SIZE;
-                        int cellClickedNumberJ = event.button.y/CELL_SIZE;
-
-                        std::cout << "I:" << cellClickedNumberI << " J:" << cellClickedNumberJ << std::endl;
+                        field->handleLeftClick(event.button.x, event.button.y);
                     }
 
                     break;
@@ -86,12 +82,7 @@ void Game::parseEvent(SDL_Event &event) {
                     if(isInField(event.button.x, event.button.y)) {
 
                         std::cout << "Mouse right" << std::endl;
-
-                        int cellClickedNumberI = event.button.x/CELL_SIZE;
-                        int cellClickedNumberJ = event.button.y/CELL_SIZE;
-
-                        std::cout << "I:" << cellClickedNumberI << " J:" << cellClickedNumberJ << std::endl;
-
+                        field->handleRightClick(event.button.x, event.button.y);
                     }
                     break;
             }

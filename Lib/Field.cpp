@@ -135,6 +135,22 @@ void Field::initCellTexture(Cell &cell) {
 
 }
 
+void Field::handleRightClick(int x, int y) {
+
+    int cellClickedNumberI = x/cellSize;
+    int cellClickedNumberJ = y/cellSize;
+
+    std::cout << "I:" << cellClickedNumberI << " J:" << cellClickedNumberJ << std::endl;
+}
+
+void Field::handleLeftClick(int x, int y) {
+
+    int cellClickedNumberI = x/cellSize;
+    int cellClickedNumberJ = y/cellSize;
+
+    std::cout << "I:" << cellClickedNumberI << " J:" << cellClickedNumberJ << std::endl;
+}
+
 const int Field::getUpBorder() const {
     return upBorder;
 }
@@ -150,3 +166,5 @@ int Field::getDownBorder() const {
 int Field::getRightBorder() const {
     return rightBorder;
 }
+
+

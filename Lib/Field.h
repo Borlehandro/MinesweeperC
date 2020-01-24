@@ -35,6 +35,10 @@ private:
 public:
 	Field(int _cells, int _bombs, int _cellSize, SDL_Renderer* _renderer); // I will also generate it here
 
+	void handleRightClick(int x, int y);
+
+	void handleLeftClick(int x, int y);
+
 	void preDraw();
 
     const int getUpBorder() const;
