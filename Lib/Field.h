@@ -16,6 +16,7 @@ private:
 	int cellsCount;
 	int bombsCount;
 	int flagsCount;
+	int unmarkedBombsCount;
 
 	int upBorder = 0, leftBorder = 0;
 	int downBorder, rightBorder;
@@ -32,6 +33,7 @@ private:
 	void loadTextures();
 	void putMarkersAround(const int &index);
 	void initCellTexture(Cell &cell);
+	void showAll();
 
 public:
 	Field(int _cells, int _bombs, int _cellSize, SDL_Renderer* _renderer); // I will also generate it here

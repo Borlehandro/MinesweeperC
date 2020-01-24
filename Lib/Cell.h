@@ -12,6 +12,7 @@ private:
     void draw(int i, int j, SDL_Renderer* renderer);
     int open(int i, int j, SDL_Texture *flag, SDL_Texture *empty, SDL_Renderer *renderer);
     int mark(int i, int j, SDL_Texture* flag, SDL_Renderer* renderer);
+    void show(int i, int j, SDL_Renderer* renderer);
 
     bool opened = false;
     int value;

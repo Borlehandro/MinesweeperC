@@ -5,14 +5,15 @@
 #include <set>
 
 Field::Field(int _cells, int _bombs, int _cellSize, SDL_Renderer *_renderer) :
-        cellsCount(_cells), bombsCount(_bombs), flagsCount(_bombs), renderer(_renderer), cellSize(_cellSize), downBorder(_cells*cellSize), rightBorder(_cells*cellSize) {
+        cellsCount(_cells), bombsCount(_bombs), flagsCount(_bombs), unmarkedBombsCount(_bombs), renderer(_renderer),
+        cellSize(_cellSize), downBorder(_cells * cellSize), rightBorder(_cells * cellSize) {
 
     // Preload Textures
     loadTextures();
 
     std::cout << "texture map: ";
 
-    for (auto & iter : textureMap) {
+    for (auto &iter : textureMap) {
         std::cout << iter.second << " ";
     }
 
@@ -46,7 +47,7 @@ Field::Field(int _cells, int _bombs, int _cellSize, SDL_Renderer *_renderer) :
     }
 
     // Init all cells textures
-    for (int i=0; i<cellsCount*cellsCount; ++i) {
+    for (int i = 0; i < cellsCount * cellsCount; ++i) {
         initCellTexture(cells[i]);
     }
 
@@ -120,7 +121,7 @@ void Field::loadTextures() {
 
 void Field::preDraw() {
 
-    for (int i = 0; i < cellsCount*cellsCount; ++i) {
+    for (int i = 0; i < cellsCount * cellsCount; ++i) {
         std::cout << "Texture: " << cells[i].closeTexture << std::endl;
         cells[i].draw(i % cellsCount, i / cellsCount, renderer);
     }
@@ -129,24 +130,45 @@ void Field::preDraw() {
 //Todo REFACTOR!
 void Field::handleRightClick(int x, int y) {
 
-    int i = x/cellSize;
-    int j = y/cellSize;
+    int i = x / cellSize;
+    int j = y / cellSize;
 
     std::cout << "I:" << i << " J:" << j << std::endl;
-    if(flagsCount>0)
-        flagsCount-=cells[i*cellsCount + j].mark(i,j,textureMap[FLAG_CODE],renderer);
+
+    if (flagsCount > 0) {
+        int res = cells[i * cellsCount + j].mark(i, j, textureMap[FLAG_CODE], renderer);
+        if(res == 1 && cells[i * cellsCount + j].value == -1 && unmarkedBombsCount>0) {
+            std::cout << "--" << std::endl;
+            unmarkedBombsCount--;
+        }
+
+        flagsCount -= res;
+    }
+
+    if(unmarkedBombsCount == 0)
+        showAll();
 
 }
 
 //Todo REFACTOR!
 void Field::handleLeftClick(int x, int y) {
+    std::cout << "Unmarked: " << unmarkedBombsCount << std::endl;
 
-    int i = x/cellSize;
-    int j = y/cellSize;
+    int i = x / cellSize;
+    int j = y / cellSize;
 
     std::cout << "I:" << i << " J:" << j << std::endl;
+    int res = cells[i * cellsCount + j].open(i, j, textureMap[FLAG_CODE], textureMap[EMPTY_CODE], renderer);
+    if (res != 2) {
+        flagsCount += res;
+        if(res == 1 && cells[i * cellsCount + j].value == -1 && unmarkedBombsCount<bombsCount) {
+            std::cout << "++" << std::endl;
+            unmarkedBombsCount++;
+        }
 
-    flagsCount+=cells[i*cellsCount + j].open(i,j,textureMap[FLAG_CODE],textureMap[EMPTY_CODE],renderer);
+    }
+    else
+        showAll();
 
 }
 
@@ -156,6 +178,12 @@ void Field::initCellTexture(Cell &cell) {
     cell.openTexture = textureMap[cell.value];
     cell.closeTexture = textureMap[EMPTY_CODE];
 
+}
+
+void Field::showAll() {
+    for (int k = 0; k < cellsCount; ++k)
+        for (int t = 0; t < cellsCount; t++)
+            cells[k*cellsCount+ t].show(k, t, renderer);
 }
 
 const int Field::getUpBorder() const {
