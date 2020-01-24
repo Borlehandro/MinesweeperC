@@ -15,6 +15,7 @@ private:
 	int cellSize; // Todo make it manually or count texture size. You really can use it for
 	int cellsCount;
 	int bombsCount;
+	int flagsCount;
 
 	int upBorder = 0, leftBorder = 0;
 	int downBorder, rightBorder;

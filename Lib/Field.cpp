@@ -5,7 +5,7 @@
 #include <set>
 
 Field::Field(int _cells, int _bombs, int _cellSize, SDL_Renderer *_renderer) :
-        cellsCount(_cells), bombsCount(_bombs), renderer(_renderer), cellSize(_cellSize), downBorder(_cells*cellSize), rightBorder(_cells*cellSize) {
+        cellsCount(_cells), bombsCount(_bombs), flagsCount(_bombs), renderer(_renderer), cellSize(_cellSize), downBorder(_cells*cellSize), rightBorder(_cells*cellSize) {
 
     // Preload Textures
     loadTextures();
@@ -47,7 +47,6 @@ Field::Field(int _cells, int _bombs, int _cellSize, SDL_Renderer *_renderer) :
 
     // Init all cells textures
     for (int i=0; i<cellsCount*cellsCount; ++i) {
-
         initCellTexture(cells[i]);
     }
 
@@ -127,28 +126,36 @@ void Field::preDraw() {
     }
 }
 
+//Todo REFACTOR!
+void Field::handleRightClick(int x, int y) {
+
+    int i = x/cellSize;
+    int j = y/cellSize;
+
+    std::cout << "I:" << i << " J:" << j << std::endl;
+    if(flagsCount>0)
+        flagsCount-=cells[i*cellsCount + j].mark(i,j,textureMap[FLAG_CODE],renderer);
+
+}
+
+//Todo REFACTOR!
+void Field::handleLeftClick(int x, int y) {
+
+    int i = x/cellSize;
+    int j = y/cellSize;
+
+    std::cout << "I:" << i << " J:" << j << std::endl;
+
+    flagsCount+=cells[i*cellsCount + j].open(i,j,textureMap[FLAG_CODE],textureMap[EMPTY_CODE],renderer);
+
+}
+
 void Field::initCellTexture(Cell &cell) {
     std::cout << "textureMap[cell->value]: " << textureMap[cell.value] << " val: " << cell.value << std::endl;
 
     cell.openTexture = textureMap[cell.value];
     cell.closeTexture = textureMap[EMPTY_CODE];
 
-}
-
-void Field::handleRightClick(int x, int y) {
-
-    int cellClickedNumberI = x/cellSize;
-    int cellClickedNumberJ = y/cellSize;
-
-    std::cout << "I:" << cellClickedNumberI << " J:" << cellClickedNumberJ << std::endl;
-}
-
-void Field::handleLeftClick(int x, int y) {
-
-    int cellClickedNumberI = x/cellSize;
-    int cellClickedNumberJ = y/cellSize;
-
-    std::cout << "I:" << cellClickedNumberI << " J:" << cellClickedNumberJ << std::endl;
 }
 
 const int Field::getUpBorder() const {

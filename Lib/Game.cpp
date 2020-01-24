@@ -70,7 +70,7 @@ void Game::parseEvent(SDL_Event &event) {
             switch (event.button.button) {
 
                 case (SDL_BUTTON_LEFT):
-                    if(isInField(event.button.x, event.button.y)) {
+                    if (isInField(event.button.x, event.button.y)) {
 
                         std::cout << "Mouse left" << std::endl;
                         field->handleLeftClick(event.button.x, event.button.y);
@@ -79,7 +79,7 @@ void Game::parseEvent(SDL_Event &event) {
                     break;
 
                 case (SDL_BUTTON_RIGHT):
-                    if(isInField(event.button.x, event.button.y)) {
+                    if (isInField(event.button.x, event.button.y)) {
 
                         std::cout << "Mouse right" << std::endl;
                         field->handleRightClick(event.button.x, event.button.y);
@@ -93,6 +93,6 @@ void Game::parseEvent(SDL_Event &event) {
 
 bool Game::isInField(int x, int y) {
 
-    return x > field->getLeftBorder() && y > field->getUpBorder()
-           && x < field->getRightBorder() && y < field->getDownBorder();
+    return x > field->getLeftBorder() && y > field->getUpBorder() && x < field->getRightBorder()
+        && y < field->getDownBorder();
 }
