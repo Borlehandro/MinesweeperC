@@ -13,7 +13,7 @@ int main(int argc, char* argv[]) {
 
 	cout << game->onPreload() << endl;
 
-	game->onRun();
+    game->onRun();
 
 	return 0;
 }

@@ -1,54 +1,63 @@
 #include "Field.h"
 
 #include <random>
-#include <time.h>
+#include <ctime>
 #include <set>
 
-Field::Field(int _cells, int _bombs, SDL_Renderer *_renderer) : 
-	cellsCount(_cells), bombsCount(_bombs), renderer(_renderer) {
+Field::Field(int _cells, int _bombs, SDL_Renderer *_renderer) :
+        cellsCount(_cells), bombsCount(_bombs), renderer(_renderer) {
 
-	// Preload Textures
-	loadTextures();
+    // Preload Textures
+    loadTextures();
 
-	// For each cell in cells array I will write value and load open texture with this number
-	// Max number is 8
-	// Firstly set all bombs (-1 in value)
+    std::cout << "texture map: ";
 
-	std::mt19937 gen(time(nullptr));
-	std::set<int> indexes;
+    for (auto & iter : textureMap) {
+        std::cout << iter.second << " ";
+    }
 
-	for (int i = 0; i < cellsCount * cellsCount; ++i)
-		indexes.insert(i);
+    std::cout << std::endl;
 
-	cells = (Cell*)calloc(cellsCount * cellsCount, sizeof(Cell));
+    // For each cell in cells array I will write value and load open texture with this number
+    // Max number is 8
+    // Firstly set all bombs (-1 in value)
 
-	for (int i = 0; i < bombsCount; ++i) {
+    std::mt19937 gen(time(nullptr));
+    std::set<int> indexes;
 
-		std::uniform_int_distribution<int> uid(0, indexes.size()-1);
+    for (int i = 0; i < cellsCount * cellsCount; ++i)
+        indexes.insert(i);
 
-		int index = uid(gen);
+    cells = (Cell *) (calloc(cellsCount * cellsCount, sizeof(Cell)));
 
-		cells[*std::next(indexes.begin(), index)] = Cell(-1, bomb, empty);
+    // Make bombs
+    for (int i = 0; i < bombsCount; ++i) {
+
+        std::uniform_int_distribution<int> uid(0, indexes.size() - 1);
+
+        int index = uid(gen);
+
+        cells[*std::next(indexes.begin(), index)] = Cell(-1, textureMap[BOMB_CODE], textureMap[EMPTY_CODE]);
 
         putMarkersAround(*std::next(indexes.begin(), index));
 
-		indexes.erase(std::next(indexes.begin(), index));
+        indexes.erase(std::next(indexes.begin(), index));
 
-	}
+    }
 
-	// Put numbers in cells
-	/*for (int i = 0; i < cellsCount * cellsCount; ++i) {
-		if (cells[i].value == 0)
-			cells[i].value = calculateValue(i);
-	}*/
+    // Init all cells textures
+    for (int i=0; i<cellsCount*cellsCount; ++i) {
 
-	// For debug
-	for (int i = 0; i < cellsCount; ++i) {
-		for (int j = 0; j < cellsCount; ++j) {
-			std::cout << cells[i * cellsCount + j].value << " ";
-		}
-		std::cout << std::endl;
-	}
+        initCellTexture(cells[i]);
+    }
+
+    // For debug
+    for (int i = 0; i < cellsCount; ++i) {
+        for (int j = 0; j < cellsCount; ++j) {
+            std::cout << cells[i * cellsCount + j].value << " ";
+        }
+        std::cout << std::endl;
+    }
 
 }
 
@@ -60,73 +69,68 @@ void Field::putMarkersAround(const int &index) {
     int i = index / cellsCount;
     int j = index % cellsCount;
 
-    #define UP_LEFT_VALUE cells[(i-1)*cellsCount+(j-1)].value
-    #define UP_CENTRAL_VALUE cells[(i - 1) * cellsCount + j].value
-    #define UP_RIGHT_VALUE cells[(i - 1) * cellsCount + (j + 1)].value
+#define UP_LEFT cells[(i-1)*cellsCount+(j-1)]
+#define UP_CENTRAL cells[(i - 1) * cellsCount + j]
+#define UP_RIGHT cells[(i - 1) * cellsCount + (j + 1)]
 
-    #define MIDDLE_LEFT_VALUE cells[i * cellsCount + (j - 1)].value
-    #define MIDDLE_RIGHT_VALUE cells[i*cellsCount + (j + 1)].value
+#define MIDDLE_LEFT cells[i * cellsCount + (j - 1)]
+#define MIDDLE_RIGHT cells[i*cellsCount + (j + 1)]
 
-    #define DOWN_LEFT_VALUE cells[(i + 1)*cellsCount + (j - 1)].value
-    #define DOWN_CENTRAL_VALUE cells[(i + 1)*cellsCount + j].value
-    #define DOWN_RIGHT_VALUE cells[(i + 1)*cellsCount + (j + 1)].value
+#define DOWN_LEFT cells[(i + 1)*cellsCount + (j - 1)]
+#define DOWN_CENTRAL cells[(i + 1)*cellsCount + j]
+#define DOWN_RIGHT cells[(i + 1)*cellsCount + (j + 1)]
 
-    // Up
-    UP_LEFT_VALUE += (i - 1 >= 0) && (j - 1 >= 0) && (UP_LEFT_VALUE != -1) ? 1 : 0;
-    UP_CENTRAL_VALUE += (i - 1 >= 0) && (UP_CENTRAL_VALUE != -1) ? 1 : 0;
-    UP_RIGHT_VALUE += (i - 1 >= 0) && (j + 1 < cellsCount) && (UP_RIGHT_VALUE != -1) ? 1 : 0;
+    //Up
+    UP_LEFT.value += (i - 1 >= 0) && (j - 1 >= 0) && (UP_LEFT.value != -1) ? 1 : 0;
+
+    UP_CENTRAL.value += (i - 1 >= 0) && (UP_CENTRAL.value != -1) ? 1 : 0;
+
+    UP_RIGHT.value += (i - 1 >= 0) && (j + 1 < cellsCount) && (UP_RIGHT.value != -1) ? 1 : 0;
 
     // Mid
-    MIDDLE_LEFT_VALUE += (j - 1 >= 0) && (MIDDLE_LEFT_VALUE != -1) ? 1 : 0;
-    MIDDLE_RIGHT_VALUE += (j + 1 < cellsCount) && (MIDDLE_RIGHT_VALUE != -1) ? 1 : 0;
+    MIDDLE_LEFT.value += (j - 1 >= 0) && (MIDDLE_LEFT.value != -1) ? 1 : 0;
+
+    MIDDLE_RIGHT.value += (j + 1 < cellsCount) && (MIDDLE_RIGHT.value != -1) ? 1 : 0;
 
     // Down
-    DOWN_LEFT_VALUE += (i + 1 < cellsCount) && (j - 1 >= 0) && (DOWN_LEFT_VALUE != -1) ? 1 : 0;
-    DOWN_CENTRAL_VALUE += (i + 1 < cellsCount) && (DOWN_CENTRAL_VALUE != -1) ? 1 : 0;
-    DOWN_RIGHT_VALUE += (i + 1 < cellsCount) && (j + 1 < cellsCount) && (DOWN_RIGHT_VALUE != -1) ? 1 : 0;
+    DOWN_LEFT.value += (i + 1 < cellsCount) && (j - 1 >= 0) && (DOWN_LEFT.value != -1) ? 1 : 0;
+
+    DOWN_CENTRAL.value += (i + 1 < cellsCount) && (DOWN_CENTRAL.value != -1) ? 1 : 0;
+
+    DOWN_RIGHT.value += (i + 1 < cellsCount) && (j + 1 < cellsCount) && (DOWN_RIGHT.value != -1) ? 1 : 0;
+
 }
-
-/* int Field::calculateValue(int index) {
-	
-	int count = 0;
-
-	int i = index / cellsCount;
-	int j = index % cellsCount;
-
-	// i / n - row
-	// i % n - coll
-
-	// Up
-	count += (i - 1 >= 0 && j - 1 >= 0) ? (cells[(i-1)*cellsCount+(j-1)].value == -1) : 0;
-	count += (i - 1 >= 0) ? (cells[(i - 1) * cellsCount + j].value == -1) : 0;
-	count += (i - 1 >= 0 && j + 1 < cellsCount) ? (cells[(i - 1) * cellsCount + (j + 1)].value == -1) : 0;
-
-	// Mid
-	count += (j - 1 >= 0) ? (cells[i * cellsCount + (j - 1)].value == -1) : 0;
-	count += (j + 1 < cellsCount) ? (cells[i*cellsCount + (j + 1)].value == -1) : 0;
-
-	// Down
-	count += (i + 1 < cellsCount && j - 1 >= 0) ? (cells[(i + 1)*cellsCount + (j - 1)].value == -1) : 0;
-	count += (i + 1 < cellsCount) ? (cells[(i + 1)*cellsCount + j].value == -1) : 0;
-	count += (i + 1 < cellsCount && j + 1 < cellsCount) ? (cells[(i + 1)*cellsCount + (j + 1)].value == -1) : 0;
-
-	return count;
-} */
 
 void Field::loadTextures() {
 
-	zero = TextureManager::getInstance()->LoadImage(renderer, "0.bmp");
-	one = TextureManager::getInstance()->LoadImage(renderer, "1.bmp");
-	two = TextureManager::getInstance()->LoadImage(renderer, "2.bmp");
-	three = TextureManager::getInstance()->LoadImage(renderer, "3.bmp");
-	four = TextureManager::getInstance()->LoadImage(renderer, "4.bmp");
-	five = TextureManager::getInstance()->LoadImage(renderer, "5.bmp");
-	six = TextureManager::getInstance()->LoadImage(renderer, "6.bmp");
-	seven = TextureManager::getInstance()->LoadImage(renderer, "7.bmp");
-	eight = TextureManager::getInstance()->LoadImage(renderer, "8.bmp");
-	
-	flag = TextureManager::getInstance()->LoadImage(renderer, "flag.bmp");
-	bomb = TextureManager::getInstance()->LoadImage(renderer, "bomb.bmp");
-	empty = TextureManager::getInstance()->LoadImage(renderer, "empty.bmp");
+    textureMap.emplace(0, TextureManager::getInstance()->LoadImage(renderer, "../Textures/0.bmp"));
+    textureMap.emplace(1, TextureManager::getInstance()->LoadImage(renderer, "../Textures/1.bmp"));
+    textureMap.emplace(2, TextureManager::getInstance()->LoadImage(renderer, "../Textures/2.bmp"));
+    textureMap.emplace(3, TextureManager::getInstance()->LoadImage(renderer, "../Textures/3.bmp"));
+    textureMap.emplace(4, TextureManager::getInstance()->LoadImage(renderer, "../Textures/4.bmp"));
+    textureMap.emplace(5, TextureManager::getInstance()->LoadImage(renderer, "../Textures/5.bmp"));
+    textureMap.emplace(6, TextureManager::getInstance()->LoadImage(renderer, "../Textures/6.bmp"));
+    textureMap.emplace(7, TextureManager::getInstance()->LoadImage(renderer, "../Textures/7.bmp"));
+    textureMap.emplace(8, TextureManager::getInstance()->LoadImage(renderer, "../Textures/8.bmp"));
+
+    textureMap.emplace(FLAG_CODE, TextureManager::getInstance()->LoadImage(renderer, "../Textures/flag.bmp"));
+    textureMap.emplace(BOMB_CODE, TextureManager::getInstance()->LoadImage(renderer, "../Textures/bomb.bmp"));
+    textureMap.emplace(EMPTY_CODE, TextureManager::getInstance()->LoadImage(renderer, "../Textures/empty.bmp"));
+
+}
+
+void Field::preDraw() {
+
+    for (int i = 0; i < cellsCount*cellsCount; ++i) {
+        std::cout << "Texture: " << cells[i].closeTexture << std::endl;
+        cells[i].draw(i % cellsCount, i / cellsCount, renderer);
+    }
+}
+
+void Field::initCellTexture(Cell &cell) {
+    std::cout << "textureMap[cell->value]: " << textureMap[cell.value] << " val: " << cell.value << std::endl;
+
+    cell.openTexture = textureMap[cell.value];
+    cell.closeTexture = textureMap[EMPTY_CODE];
 
 }
