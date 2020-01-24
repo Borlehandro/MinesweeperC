@@ -20,16 +20,19 @@ class Game {
 		//Resources
 		SDL_Texture* background = nullptr;
 
+		//Field
+		Field *field;
+
 		//Status 
 		bool run = true;
 
 	public:
-		// Game() : SCREEN_WIDTH(), SCREEN_HEIGHT() {} ;
 		Game(int widht, int height) : 
 			SCREEN_WIDTH(widht), 
 			SCREEN_HEIGHT(height) {};
 
 		int onPreload();
+		void onPredraw();
 		void onRun();
 		bool isRun();
 };

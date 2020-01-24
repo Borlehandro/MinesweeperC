@@ -51,14 +51,21 @@ int Game::onPreload() {
 
 	background = textureManager->LoadImage(renderer, "../Textures/test.bmp");
 
-	auto *field = new Field(5, 3, renderer);
-
-    field->preDraw();
+	field = new Field(5, 3, renderer);
 
 	return 0;
 }
 
+void Game::onPredraw() {
+
+    textureManager->ApplySurface(0, 0, background, renderer);
+    field->preDraw();
+}
+
 void Game::onRun() {
+
+    //Predraw some textures
+    onPredraw();
 
 	SDL_Event event;
 
@@ -66,8 +73,6 @@ void Game::onRun() {
 
 			SDL_WaitEvent(&event);
 			parseEvent(event);
-
-			// textureManager->ApplySurface(0, 0, background, renderer);
 
 		}
 
