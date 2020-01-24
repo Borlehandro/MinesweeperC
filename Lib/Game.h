@@ -4,9 +4,11 @@
 #include "Field.h"
 
 class Game {
+#define CELL_SIZE 20
 	private:
 		//Private functions
 		void parseEvent(SDL_Event &event);
+		bool isInField(int x, int y);
 
 		//Functional objects
 		SDL_Window* window = nullptr;
@@ -21,7 +23,7 @@ class Game {
 		SDL_Texture* background = nullptr;
 
 		//Field
-		Field *field;
+		Field *field = nullptr;
 
 		//Status 
 		bool run = true;

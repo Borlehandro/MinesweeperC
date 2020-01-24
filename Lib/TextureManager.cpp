@@ -11,7 +11,7 @@ TextureManager* TextureManager::getInstance() {
     return TextureManager::instance;
 }
 
-SDL_Texture *TextureManager::LoadImage(SDL_Renderer *renderer, std::string file) {
+SDL_Texture *TextureManager::LoadImage(SDL_Renderer *renderer, const std::string& file) {
 
     //Todo make loading for any image type with SDL_image
 
@@ -27,10 +27,10 @@ void TextureManager::ApplySurface(int x, int y, SDL_Texture* texture, SDL_Render
     pos.y = y;
 
     // You can change texture height and wight here
-    SDL_QueryTexture(texture, NULL, NULL, &pos.w, &pos.h);
+    SDL_QueryTexture(texture, nullptr, nullptr, &pos.w, &pos.h);
 
     // You can cut part of texture with third param
-    SDL_RenderCopy(renderer, texture, NULL, &pos);
+    SDL_RenderCopy(renderer, texture, nullptr, &pos);
 
     SDL_RenderPresent(renderer);
 }

@@ -1,59 +1,34 @@
 #include "Game.h"
 #include <SDL2/SDL.h>
 
-void Game::parseEvent(SDL_Event& event) {
-
-	switch (event.type) {
-		
-	case(SDL_QUIT):
-		run = false;
-		break;
-
-	case(SDL_MOUSEBUTTONDOWN):
-		switch (event.button.button) {
-
-		case (SDL_BUTTON_LEFT):
-			std::cout << "Mouse left" << std::endl;
-			break;
-
-		case (SDL_BUTTON_RIGHT):
-			std::cout << "Mouse right" << std::endl;
-			break;
-
-		}
-
-		break;
-	}
-}
-
 int Game::onPreload() {
 
-	if (SDL_Init(SDL_INIT_EVERYTHING) == -1) {
-		std::cout << SDL_GetError() << std::endl;
-		return 1;
-	}
+    if (SDL_Init(SDL_INIT_EVERYTHING) == -1) {
+        std::cout << SDL_GetError() << std::endl;
+        return 1;
+    }
 
-	window = SDL_CreateWindow("Test", SDL_WINDOWPOS_CENTERED,
-		SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    window = SDL_CreateWindow("Test", SDL_WINDOWPOS_CENTERED,
+                              SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 
-	if (window == nullptr) {
-		std::cout << SDL_GetError() << std::endl;
-		return 2;
-	}
+    if (window == nullptr) {
+        std::cout << SDL_GetError() << std::endl;
+        return 2;
+    }
 
-	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED
-		| SDL_RENDERER_PRESENTVSYNC);
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED
+                                              | SDL_RENDERER_PRESENTVSYNC);
 
-	if (renderer == nullptr) {
-		std::cout << SDL_GetError() << std::endl;
-		return 3;
-	}
+    if (renderer == nullptr) {
+        std::cout << SDL_GetError() << std::endl;
+        return 3;
+    }
 
-	background = textureManager->LoadImage(renderer, "../Textures/test.bmp");
+    background = textureManager->LoadImage(renderer, "../Textures/test.bmp");
 
-	field = new Field(5, 3, renderer);
+    field = new Field(5, 3, CELL_SIZE, renderer);
 
-	return 0;
+    return 0;
 }
 
 void Game::onPredraw() {
@@ -67,18 +42,66 @@ void Game::onRun() {
     //Predraw some textures
     onPredraw();
 
-	SDL_Event event;
+    SDL_Event event;
 
-		while (run) {
+    while (run) {
 
-			SDL_WaitEvent(&event);
-			parseEvent(event);
+        SDL_WaitEvent(&event);
+        parseEvent(event);
 
-		}
+    }
 
-	SDL_Quit();
+    SDL_Quit();
 }
 
 bool Game::isRun() {
-	return run;
+    return run;
+}
+
+void Game::parseEvent(SDL_Event &event) {
+
+    switch (event.type) {
+
+        case (SDL_QUIT):
+            run = false;
+            break;
+
+        case (SDL_MOUSEBUTTONDOWN):
+            switch (event.button.button) {
+
+                case (SDL_BUTTON_LEFT):
+                    if(isInField(event.button.x, event.button.y)) {
+
+                        std::cout << "Mouse left" << std::endl;
+
+                        int cellClickedNumberI = event.button.x/CELL_SIZE;
+                        int cellClickedNumberJ = event.button.y/CELL_SIZE;
+
+                        std::cout << "I:" << cellClickedNumberI << " J:" << cellClickedNumberJ << std::endl;
+                    }
+
+                    break;
+
+                case (SDL_BUTTON_RIGHT):
+                    if(isInField(event.button.x, event.button.y)) {
+
+                        std::cout << "Mouse right" << std::endl;
+
+                        int cellClickedNumberI = event.button.x/CELL_SIZE;
+                        int cellClickedNumberJ = event.button.y/CELL_SIZE;
+
+                        std::cout << "I:" << cellClickedNumberI << " J:" << cellClickedNumberJ << std::endl;
+
+                    }
+                    break;
+            }
+
+            break;
+    }
+}
+
+bool Game::isInField(int x, int y) {
+
+    return x > field->getLeftBorder() && y > field->getUpBorder()
+           && x < field->getRightBorder() && y < field->getDownBorder();
 }

@@ -4,8 +4,8 @@
 #include <ctime>
 #include <set>
 
-Field::Field(int _cells, int _bombs, SDL_Renderer *_renderer) :
-        cellsCount(_cells), bombsCount(_bombs), renderer(_renderer) {
+Field::Field(int _cells, int _bombs, int _cellSize, SDL_Renderer *_renderer) :
+        cellsCount(_cells), bombsCount(_bombs), renderer(_renderer), cellSize(_cellSize), downBorder(_cells*cellSize), rightBorder(_cells*cellSize) {
 
     // Preload Textures
     loadTextures();
@@ -133,4 +133,20 @@ void Field::initCellTexture(Cell &cell) {
     cell.openTexture = textureMap[cell.value];
     cell.closeTexture = textureMap[EMPTY_CODE];
 
+}
+
+const int Field::getUpBorder() const {
+    return upBorder;
+}
+
+const int Field::getLeftBorder() const {
+    return leftBorder;
+}
+
+int Field::getDownBorder() const {
+    return downBorder;
+}
+
+int Field::getRightBorder() const {
+    return rightBorder;
 }

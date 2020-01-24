@@ -12,9 +12,12 @@ class Field {
     #define EMPTY_CODE -3
 
 private:
-	const int cellSize = 20; // Todo make it const or count texture size
+	int cellSize; // Todo make it manually or count texture size. You really can use it for
 	int cellsCount;
 	int bombsCount;
+
+	int upBorder = 0, leftBorder = 0;
+	int downBorder, rightBorder;
 
 	// Array of cells
 	Cell* cells = nullptr;
@@ -30,7 +33,16 @@ private:
 	void initCellTexture(Cell &cell);
 
 public:
-	Field(int _cells, int _bombs, SDL_Renderer* _renderer); // I will also generate it here
+	Field(int _cells, int _bombs, int _cellSize, SDL_Renderer* _renderer); // I will also generate it here
+
 	void preDraw();
+
+    const int getUpBorder() const;
+
+    const int getLeftBorder() const;
+
+    int getDownBorder() const;
+
+    int getRightBorder() const;
 
 };
