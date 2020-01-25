@@ -6,10 +6,14 @@
 
 Field::Field(int _cells, int _bombs, int _cellSize, SDL_Renderer *_renderer) :
         cellsCount(_cells), bombsCount(_bombs), flagsCount(_bombs), unmarkedBombsCount(_bombs), renderer(_renderer),
-        cellSize(_cellSize), downBorder(_cells * cellSize), rightBorder(_cells * cellSize) {
+        cellSize(_cellSize), downBorder(_cells * cellSize + upBorder), rightBorder(_cells * cellSize + leftBorder) {
 
     // Preload Textures
     loadTextures();
+
+    Cell::size = cellSize;
+    Cell::angleY = upBorder;
+    Cell::angleX = leftBorder;
 
     std::cout << "texture map: ";
 
@@ -132,11 +136,10 @@ void Field::preDraw() {
     }
 }
 
-//Todo REFACTOR!
 void Field::handleRightClick(int x, int y) {
 
-    int i = x / cellSize;
-    int j = y / cellSize;
+    int i = (x - leftBorder) / cellSize;
+    int j = (y - upBorder) / cellSize;
 
     std::cout << "I:" << i << " J:" << j << std::endl;
 
@@ -150,17 +153,18 @@ void Field::handleRightClick(int x, int y) {
         flagsCount -= res;
     }
 
-    if(unmarkedBombsCount == 0)
+    if(unmarkedBombsCount == 0) {
         showAll();
+        status = IS_FINISHED;
+    }
 
 }
 
-//Todo REFACTOR!
 void Field::handleLeftClick(int x, int y) {
     std::cout << "Unmarked: " << unmarkedBombsCount << std::endl;
 
-    int i = x / cellSize;
-    int j = y / cellSize;
+    int i = (x - leftBorder) / cellSize;
+    int j = (y - upBorder) / cellSize;
 
     std::cout << "I:" << i << " J:" << j << std::endl;
     int res = cells[i * cellsCount + j].open(i, j, renderer);
@@ -172,8 +176,10 @@ void Field::handleLeftClick(int x, int y) {
         }
 
     }
-    else
+    else {
         showAll();
+        status = IS_ABORTED;
+    }
 
 }
 
@@ -188,7 +194,7 @@ void Field::initCellTexture(Cell &cell) {
 void Field::showAll() {
     for (int k = 0; k < cellsCount; ++k)
         for (int t = 0; t < cellsCount; t++)
-            cells[k*cellsCount+ t].show(k, t, renderer);
+            cells[k * cellsCount + t].show(k, t, renderer);
 }
 
 const int Field::getUpBorder() const {
@@ -199,10 +205,14 @@ const int Field::getLeftBorder() const {
     return leftBorder;
 }
 
-int Field::getDownBorder() const {
+const int Field::getDownBorder() const {
     return downBorder;
 }
 
-int Field::getRightBorder() const {
+const int Field::getRightBorder() const {
     return rightBorder;
+}
+
+unsigned int Field::getStatus() {
+    return status;
 }

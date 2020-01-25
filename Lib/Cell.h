@@ -28,4 +28,7 @@ private:
     static SDL_Texture *emptyTexture;
     static SDL_Texture *crossedFlagTexture;
 
+    static int size;
+    static int angleY, angleX;
+
 };

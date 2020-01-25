@@ -13,22 +13,24 @@ class Field {
     #define CROSSED_FLAG_CODE -4
 
 private:
-	int cellSize; // Todo make it manually or count texture size. You really can use it for
-	int cellsCount;
-	int bombsCount;
+	const int cellSize;
+	const int cellsCount;
+	const int bombsCount;
 	int flagsCount;
 	int unmarkedBombsCount;
 
-	int upBorder = 0, leftBorder = 0;
-	int downBorder, rightBorder;
+	const int upBorder = 65, leftBorder = 125;
+	const int downBorder, rightBorder;
 
-	// Array of cells
+	// Cells matrix
 	Cell* cells = nullptr;
 
 	// Textures
 	std::unordered_map<int, SDL_Texture*> textureMap;
 
 	SDL_Renderer *renderer;
+
+    unsigned int status = IS_PAYING;
 
 	// Functions inside
 	void loadTextures();
@@ -37,6 +39,11 @@ private:
 	void showAll();
 
 public:
+
+    const static unsigned int IS_PAYING = 0;
+    const static unsigned int IS_FINISHED = 1;
+    const static unsigned int IS_ABORTED = 2;
+
 	Field(int _cells, int _bombs, int _cellSize, SDL_Renderer* _renderer); // I will also generate it here
 
 	void handleRightClick(int x, int y);
@@ -45,12 +52,11 @@ public:
 
 	void preDraw();
 
+	unsigned int getStatus();
+
     const int getUpBorder() const;
-
     const int getLeftBorder() const;
-
-    int getDownBorder() const;
-
-    int getRightBorder() const;
+    const int getDownBorder() const;
+    const int getRightBorder() const;
 
 };

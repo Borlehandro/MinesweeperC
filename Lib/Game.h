@@ -4,7 +4,7 @@
 #include "Field.h"
 
 class Game {
-#define CELL_SIZE 20
+#define CELL_SIZE 75
 	private:
 		//Private functions
 		void parseEvent(SDL_Event &event);
@@ -20,7 +20,9 @@ class Game {
 		const int SCREEN_HEIGHT;
 
 		//Resources
-		SDL_Texture* background = nullptr;
+		SDL_Texture *background = nullptr;
+		SDL_Texture *blueScreen = nullptr;
+        SDL_Texture *winScreen = nullptr;
 
 		//Field
 		Field *field = nullptr;
