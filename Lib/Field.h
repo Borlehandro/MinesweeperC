@@ -10,6 +10,7 @@ class Field {
     #define BOMB_CODE -1
     #define FLAG_CODE -2
     #define EMPTY_CODE -3
+    #define CROSSED_FLAG_CODE -4
 
 private:
 	int cellSize; // Todo make it manually or count texture size. You really can use it for
