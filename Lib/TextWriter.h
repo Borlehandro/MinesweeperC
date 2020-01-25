@@ -9,7 +9,8 @@ class TextWriter {
 
 public:
     static TextWriter *getInstance();
-    void renderText(const std::string& text, int x, int y, SDL_Color color, SDL_Renderer* renderer);
+
+    void renderText(const std::string &text, int x, int y, SDL_Color color, SDL_Renderer *renderer);
 
 private:
     static TextWriter *instance;

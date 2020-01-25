@@ -7,13 +7,13 @@ const int SCREEN_HEIGHT = 480;
 
 using namespace std;
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
 
-	Game *game = new Game(SCREEN_WIDTH, SCREEN_HEIGHT);
+    Game *game = new Game(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-	cout << game->onPreload() << endl;
+    cout << game->preload() << endl;
 
-    game->onRun();
+    game->run();
 
-	return 0;
+    return 0;
 }

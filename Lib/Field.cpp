@@ -120,7 +120,8 @@ void Field::loadTextures() {
     textureMap.emplace(FLAG_CODE, TextureManager::getInstance()->LoadImage(renderer, "../Textures/flag.bmp"));
     textureMap.emplace(BOMB_CODE, TextureManager::getInstance()->LoadImage(renderer, "../Textures/bomb.bmp"));
     textureMap.emplace(EMPTY_CODE, TextureManager::getInstance()->LoadImage(renderer, "../Textures/empty.bmp"));
-    textureMap.emplace(CROSSED_FLAG_CODE, TextureManager::getInstance()->LoadImage(renderer, "../Textures/crossed_flag.bmp"));
+    textureMap.emplace(CROSSED_FLAG_CODE,
+                       TextureManager::getInstance()->LoadImage(renderer, "../Textures/crossed_flag.bmp"));
 
     Cell::flagTexture = textureMap[FLAG_CODE];
     Cell::emptyTexture = textureMap[EMPTY_CODE];
@@ -145,7 +146,7 @@ void Field::handleRightClick(int x, int y) {
 
     if (flagsCount > 0) {
         int res = cells[i * cellsCount + j].mark(i, j, renderer);
-        if(res == 1 && cells[i * cellsCount + j].value == -1 && unmarkedBombsCount>0) {
+        if (res == 1 && cells[i * cellsCount + j].value == -1 && unmarkedBombsCount > 0) {
             std::cout << "--" << std::endl;
             unmarkedBombsCount--;
         }
@@ -153,7 +154,7 @@ void Field::handleRightClick(int x, int y) {
         flagsCount -= res;
     }
 
-    if(unmarkedBombsCount == 0) {
+    if (unmarkedBombsCount == 0) {
         showAll();
         status = IS_FINISHED;
     }
@@ -170,13 +171,12 @@ void Field::handleLeftClick(int x, int y) {
     int res = cells[i * cellsCount + j].open(i, j, renderer);
     if (res != 2) {
         flagsCount += res;
-        if(res == 1 && cells[i * cellsCount + j].value == -1 && unmarkedBombsCount<bombsCount) {
+        if (res == 1 && cells[i * cellsCount + j].value == -1 && unmarkedBombsCount < bombsCount) {
             std::cout << "++" << std::endl;
             unmarkedBombsCount++;
         }
 
-    }
-    else {
+    } else {
         showAll();
         status = IS_ABORTED;
     }

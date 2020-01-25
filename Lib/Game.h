@@ -3,40 +3,46 @@
 #include "TextureManager.h"
 #include "Field.h"
 
-class Game {
 #define CELL_SIZE 75
-	private:
-		//Private functions
-		void parseEvent(SDL_Event &event);
-		bool isInField(int x, int y);
 
-		//Functional objects
-		SDL_Window* window = nullptr;
-		SDL_Renderer* renderer = nullptr;
-		TextureManager* textureManager = TextureManager::getInstance();
+class Game {
 
-		//Windows Params
-		const int SCREEN_WIDTH;
-		const int SCREEN_HEIGHT;
+private:
+    //Private functions
+    void parseEvent(SDL_Event &event);
 
-		//Resources
-		SDL_Texture *background = nullptr;
-		SDL_Texture *blueScreen = nullptr;
-        SDL_Texture *winScreen = nullptr;
+    bool isInField(int x, int y);
 
-		//Field
-		Field *field = nullptr;
+    //Functional objects
+    SDL_Window *window = nullptr;
+    SDL_Renderer *renderer = nullptr;
+    TextureManager *textureManager = TextureManager::getInstance();
 
-		//Status 
-		bool run = true;
+    //Windows Params
+    const int SCREEN_WIDTH;
+    const int SCREEN_HEIGHT;
 
-	public:
-		Game(int widht, int height) : 
-			SCREEN_WIDTH(widht), 
-			SCREEN_HEIGHT(height) {};
+    //Resources
+    SDL_Texture *background = nullptr;
+    SDL_Texture *blueScreen = nullptr;
+    SDL_Texture *winScreen = nullptr;
 
-		int onPreload();
-		void onPredraw();
-		void onRun();
-		bool isRun();
+    //Field
+    Field *field = nullptr;
+
+    //Status
+    bool isRunning = true;
+
+public:
+    Game(int widht, int height) :
+            SCREEN_WIDTH(widht),
+            SCREEN_HEIGHT(height) {};
+
+    int preload();
+
+    void predraw();
+
+    void run();
+
+    bool isRun();
 };

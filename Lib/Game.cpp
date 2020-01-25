@@ -20,7 +20,7 @@
 #define WHITE SDL_Color({255,255,255})
 #define GREEN SDL_Color({0,255,0})
 
-int Game::onPreload() {
+int Game::preload() {
 
     if (SDL_Init(SDL_INIT_EVERYTHING) == -1) {
         std::cout << SDL_GetError() << std::endl;
@@ -52,55 +52,59 @@ int Game::onPreload() {
     return 0;
 }
 
-void Game::onPredraw() {
+void Game::predraw() {
 
     textureManager->ApplySurface(0, 0, background, renderer);
 
     field->preDraw();
 }
 
-void Game::onRun() {
+void Game::run() {
 
     //Predraw some textures
-    onPredraw();
+    predraw();
 
     SDL_Event event;
 
-    while (run) {
+    while (isRunning) {
 
         SDL_WaitEvent(&event);
         parseEvent(event);
 
-        if(field->getStatus() == Field::IS_ABORTED) {
+        if (field->getStatus() == Field::IS_ABORTED) {
             SDL_Delay(DELAY_STEP);
-            field = new Field(CELLS_COUNT, BOMBS_COUNT-2, CELL_SIZE, renderer);
+            field = new Field(CELLS_COUNT, BOMBS_COUNT - 2, CELL_SIZE, renderer);
 
             SDL_RenderClear(renderer);
-            for(int i=0; i<TIMER_COUNT; ++i) {
-                textureManager->ApplySurface(0,0,blueScreen,renderer);
-                TextWriter::getInstance()->renderText("You fail that game! New game will start in... ", LOSE_TEXT_X, LOSE_TEXT_Y, WHITE, renderer);
-                TextWriter::getInstance()->renderText(std::to_string(TIMER_COUNT-i), 300, 350, WHITE ,renderer);
+            for (int i = 0; i < TIMER_COUNT; ++i) {
+                textureManager->ApplySurface(0, 0, blueScreen, renderer);
+                TextWriter::getInstance()->renderText("You FAILED this game! New game will start in... ", LOSE_TEXT_X,
+                                                      LOSE_TEXT_Y, WHITE, renderer);
+                TextWriter::getInstance()->renderText(std::to_string(TIMER_COUNT - i), LOSE_COUNT_TEXT_X,
+                                                      LOSE_COUNT_TEXT_Y, WHITE, renderer);
                 SDL_Delay(DELAY_STEP);
                 SDL_RenderClear(renderer);
 
             }
 
-            onPredraw();
-        } else if(field->getStatus() == Field::IS_FINISHED) {
+            predraw();
+        } else if (field->getStatus() == Field::IS_FINISHED) {
             SDL_Delay(DELAY_STEP);
-            field = new Field(CELLS_COUNT, BOMBS_COUNT+5, CELL_SIZE, renderer);
+            field = new Field(CELLS_COUNT, BOMBS_COUNT + 5, CELL_SIZE, renderer);
 
             SDL_RenderClear(renderer);
-            for(int i=0; i<TIMER_COUNT; ++i) {
-                textureManager->ApplySurface(0,0,winScreen,renderer);
-                TextWriter::getInstance()->renderText("You WIN that game! New game will start in... ", WIN_TEXT_X, WIN_TEXT_Y, GREEN ,renderer);
-                TextWriter::getInstance()->renderText(std::to_string(TIMER_COUNT-i), 300, 250, GREEN,renderer);
+            for (int i = 0; i < TIMER_COUNT; ++i) {
+                textureManager->ApplySurface(0, 0, winScreen, renderer);
+                TextWriter::getInstance()->renderText("You WON this game! New game will start in... ", WIN_TEXT_X,
+                                                      WIN_TEXT_Y, GREEN, renderer);
+                TextWriter::getInstance()->renderText(std::to_string(TIMER_COUNT - i), WIN_COUNT_TEXT_X,
+                                                      WIN_COUNT_TEXT_Y, GREEN, renderer);
                 SDL_Delay(DELAY_STEP);
                 SDL_RenderClear(renderer);
 
             }
 
-            onPredraw();
+            predraw();
         }
 
     }
@@ -109,7 +113,7 @@ void Game::onRun() {
 }
 
 bool Game::isRun() {
-    return run;
+    return isRunning;
 }
 
 void Game::parseEvent(SDL_Event &event) {
@@ -117,7 +121,7 @@ void Game::parseEvent(SDL_Event &event) {
     switch (event.type) {
 
         case (SDL_QUIT):
-            run = false;
+            isRunning = false;
             break;
 
         case (SDL_MOUSEBUTTONDOWN):
@@ -148,5 +152,5 @@ void Game::parseEvent(SDL_Event &event) {
 bool Game::isInField(int x, int y) {
 
     return x > field->getLeftBorder() && y > field->getUpBorder() && x < field->getRightBorder()
-        && y < field->getDownBorder();
+           && y < field->getDownBorder();
 }

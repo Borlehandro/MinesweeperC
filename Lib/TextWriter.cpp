@@ -13,16 +13,16 @@ TextWriter *TextWriter::getInstance() {
     return TextWriter::instance;
 }
 
-void TextWriter::renderText(const std::string& text, int x, int y, SDL_Color color, SDL_Renderer* renderer) {
+void TextWriter::renderText(const std::string &text, int x, int y, SDL_Color color, SDL_Renderer *renderer) {
 
     if (TTF_Init() < 0)
         throw std::runtime_error("Can not init TTF!");
 
-    TTF_Font* font = TTF_OpenFont("../Fronts/JetBrainsMono-Bold.ttf", 24);
+    TTF_Font *font = TTF_OpenFont("../Fronts/JetBrainsMono-Bold.ttf", 24);
 
-    SDL_Surface* surfaceMessage = TTF_RenderText_Solid(font, text.c_str(), color);
+    SDL_Surface *surfaceMessage = TTF_RenderText_Solid(font, text.c_str(), color);
 
-    SDL_Texture* message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
+    SDL_Texture *message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
 
     TextureManager::getInstance()->ApplySurface(x, y, message, renderer);
 
